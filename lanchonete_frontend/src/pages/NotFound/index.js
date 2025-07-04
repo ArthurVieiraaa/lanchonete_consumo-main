@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Title } from "./style";
+
 const NotFound = () => {
     return (
         <Container>
@@ -8,4 +9,5 @@ const NotFound = () => {
         </Container>
     );
 };
+
 export default NotFound;

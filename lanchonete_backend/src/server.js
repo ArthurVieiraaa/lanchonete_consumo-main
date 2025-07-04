@@ -3,6 +3,7 @@ const db = require('./config/db');
 const dotenv = require('dotenv');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./docs/swagger');
+const cors = require('cors');
 
 // Rotas
 const userRouter = require('./routes/userRoutes');
@@ -16,6 +17,7 @@ dotenv.config(); // Carrega variáveis do .env
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 console.log('Starting server...');
 
