@@ -19,31 +19,34 @@ import { login } from "../../services/auth";
 import { IonIcon } from '@ionic/react';
 import { mailOutline, lockClosedOutline } from 'ionicons/icons';
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSignIn = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !senha) {
       setError("Preencha email e senha para continuar!");
       return;
     }
     try {
-      const response = await api.post("/user", { email, password: senha });
-      login(response.data.token);
+      const response = await api.post("/user/login", { email, password: senha });
+      localStorage.setItem('token', response.data.token);
+      if (setIsLoggedIn) setIsLoggedIn(true)
       navigate("/app");
     } catch (err) {
-      setError("Houve um problema com o login, verifique suas credenciais!!");
+      const msg = err.response?.data?.error || "Houve um problema com o login, verifique suas credenciais!!";
+      setError(msg);
     }
   };
+
   return (
     <Container>
       <FormBox>
         <FormValue>
-          <form onSubmit={handleSignIn}>
+          <form onSubmit={handleSubmit}>
             <Title>Login</Title>
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -83,4 +86,5 @@ const Login = () => {
     </Container>
   );
 };
+
 export default Login;

@@ -13,7 +13,7 @@ const orderRouter = require('./routes/orderRoutes');
 const orderItemRouter = require('./routes/orderItemRoutes');
 
 
-dotenv.config(); // Carrega variáveis do .env
+require('dotenv').config(); // Carrega variáveis do .env
 
 const app = express();
 app.use(express.json());
