@@ -14,7 +14,7 @@ const Categories = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await api.get("/categories");
+      const response = await api.get("/category");
       setCategories(response.data);
     } catch (err) {
       setError("Erro ao carregar categorias");
@@ -34,7 +34,7 @@ const Categories = () => {
   const handleDeleteCategory = async (id) => {
     if (window.confirm("Deseja realmente excluir esta categoria?")) {
       try {
-        await api.delete(`/categories/${id}`);
+        await api.delete(`/category/${id}`);
         loadCategories();
       } catch (err) {
         setError("Erro ao excluir categoria");
@@ -56,11 +56,11 @@ const Categories = () => {
         </thead>
         <tbody>
           {categories.map((cat) => (
-            <tr key={cat.id}>
-              <td>{cat.name}</td>
+            <tr key={cat.idCategory}>
+              <td>{cat.nameCategory}</td>
               <td>
                 <button onClick={() => handleEditCategory(cat)}>Editar</button>
-                <button onClick={() => handleDeleteCategory(cat.id)}>Excluir</button>
+                <button onClick={() => handleDeleteCategory(cat.idCategory)}>Excluir</button>
               </td>
             </tr>
           ))}
@@ -83,30 +83,30 @@ const Categories = () => {
 };
 
 const CategoryModal = ({ isOpen, onClose, category, onCategorySaved }) => {
-  const [name, setName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (category) {
-      setName(category.name);
+      setCategoryName(category.nameCategory);
     } else {
-      setName("");
+      setCategoryName("");
     }
   }, [category]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!name.trim()) {
+    if (!categoryName.trim()) {
       setError("O nome da categoria é obrigatório");
       return;
     }
 
     try {
       if (category) {
-        await api.put(`/categories/${category.id}`, { name });
+        await api.put(`/category/${category.idCategory}`, { nameCategory: categoryName });
       } else {
-        await api.post("/categories", { name });
+        await api.post("/category", { nameCategory: categoryName });
       }
       onCategorySaved();
     } catch (err) {
@@ -124,8 +124,8 @@ const CategoryModal = ({ isOpen, onClose, category, onCategorySaved }) => {
           <input
             type="text"
             placeholder="Nome da categoria"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
           />
           {error && <p style={{ color: "red" }}>{error}</p>}
           <div className="button-group">

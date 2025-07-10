@@ -16,7 +16,7 @@ const Products = () => {
 
   const loadProducts = async () => {
     try {
-      const response = await api.get("/products");
+      const response = await api.get("/product");
       setProducts(response.data);
     } catch (err) {
       setError("Erro ao carregar produtos");
@@ -25,7 +25,7 @@ const Products = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await api.get("/categories");
+      const response = await api.get("/category");
       setCategories(response.data);
     } catch (err) {
       setError("Erro ao carregar categorias");
@@ -45,7 +45,7 @@ const Products = () => {
   const handleDeleteProduct = async (id) => {
     if (window.confirm("Deseja realmente excluir este produto?")) {
       try {
-        await api.delete(`/products/${id}`);
+        await api.delete(`/product/${id}`, {idProduct: id});
         loadProducts();
       } catch (err) {
         setError("Erro ao excluir produto");
@@ -69,18 +69,18 @@ const Products = () => {
         </thead>
         <tbody>
           {products.map((product) => (
-            <tr key={product.id}>
+            <tr key={product.idProduct}>
               <td>{product.name}</td>
               <td>R$ {(Number(product.price) || 0).toFixed(2)}</td>
               <td>
                 {
-                  categories.find((cat) => cat.id === product.categoryId)?.name ||
+                  categories.find((cat) => cat.categoryId === product.categoryId)?.nameCategory ||
                   "Sem categoria"
                 }
               </td>
               <td>
                 <button onClick={() => handleEditProduct(product)}>Editar</button>
-                <button onClick={() => handleDeleteProduct(product.id)}>Excluir</button>
+                <button onClick={() => handleDeleteProduct(product.idProduct)}>Excluir</button>
               </td>
             </tr>
           ))}
@@ -104,24 +104,26 @@ const Products = () => {
 
 const ProductModal = ({ isOpen, onClose, product, categories, onProductSaved }) => {
   const [formData, setFormData] = useState({
-    nome: "",
-    valor: "",
-    categoria: "",
+    name: "",
+    price: "",
+    category: "",
+    productId: "",
   });
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (product) {
       setFormData({
-        nome: product.name,
-        valor: product.price,
-        categoria: product.categoryId || "",
+        name: product.name,
+        price: product.price,
+        category: product.categoryId || "",
+        productId: product.idProduct
       });
     } else {
       setFormData({
-        nome: "",
-        valor: "",
-        categoria: "",
+        name: "",
+        price: "",
+        category: "",
       });
     }
   }, [product]);
@@ -137,22 +139,25 @@ const ProductModal = ({ isOpen, onClose, product, categories, onProductSaved }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!formData.nome || !formData.valor || !formData.categoria) {
+
+    console.log("Form data:", formData);
+    if (!formData.name || !formData.price || !formData.category) {
       setError("Todos os campos são obrigatórios");
       return;
     }
 
     const productData = {
-      name: formData.nome,
-      price: parseFloat(formData.valor),
-      categoryId: parseInt(formData.categoria),
+      name: formData.name,
+      price: parseFloat(formData.price),
+      idCategory: parseInt(formData.category),
+      idProduct: parseInt(formData.productId),
     };
 
     try {
       if (product) {
-        await api.put(`/products/${product.id}`, productData);
+        await api.put(`/product/${product.idProduct}`, productData);
       } else {
-        await api.post("/products", productData);
+        await api.post("/product", productData);
       }
       onProductSaved();
     } catch (err) {
@@ -169,31 +174,32 @@ const ProductModal = ({ isOpen, onClose, product, categories, onProductSaved }) 
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            name="nome"
+            name="name"
             placeholder="Nome do produto"
-            value={formData.nome}
+            value={formData.name}
             onChange={handleChange}
           />
           <input
             type="number"
-            name="valor"
+            name="price"
             placeholder="Preço"
             step="0.01"
-            value={formData.valor}
+            value={formData.price}
             onChange={handleChange}
           />
           <select
-            name="categoria"
-            value={formData.categoria}
-            onChange={handleChange}
+            name="category"
+            value={formData.category}     
+            onChange={handleChange} 
           >
             <option value="">Selecione a categoria</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
+              <option key={cat.idCategory} value={cat.idCategory}>
+                {cat.nameCategory}
               </option>
             ))}
           </select>
+
           {error && <p style={{ color: "red" }}>{error}</p>}
           <div className="button-group">
             <button type="submit">{product ? "Atualizar" : "Criar"}</button>

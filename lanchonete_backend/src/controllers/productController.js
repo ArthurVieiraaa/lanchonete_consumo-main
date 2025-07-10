@@ -26,7 +26,7 @@ class ProductController {
 
   
   static async updateProducts(req, res) {
-    const { id: idProduct, name, price, idCategory } = req.body;
+    const { idProduct, name, price, idCategory } = req.body;
 
     try {
       const product = await Product.findByPk(idProduct);
@@ -43,7 +43,7 @@ class ProductController {
 
   
   static async deleteProducts(req, res) {
-    const { id: idProduct } = req.body;
+    const idProduct = req.params.id;
 
     try {
       const product = await Product.findByPk(idProduct);

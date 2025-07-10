@@ -59,7 +59,7 @@ const Orders = () => {
 
   const loadOrders = async () => {
     try {
-      const response = await api.get("/orders/");
+      const response = await api.get("/order/");
       setOrders(response.data);
     } catch (err) {
       setError("Erro ao carregar pedidos");
@@ -81,7 +81,7 @@ const Orders = () => {
         observacao: product.observacao,
       }));
 
-      await api.post("/orders", { items });
+      await api.post("/order", { items });
       setShowProductSelection(false);
       await loadOrders();
     } catch (err) {
@@ -94,7 +94,7 @@ const Orders = () => {
     if (window.confirm("Tem certeza que deseja excluir este pedido?")) {
       try {
         setError("");
-        await api.delete(`/orders/${id}`);
+        await api.delete(`/order/${id}`);
         setOrders((prev) => prev.filter((order) => order.id !== id));
       } catch (err) {
         setError("Erro ao excluir pedido");
@@ -112,7 +112,7 @@ const Orders = () => {
         return;
       }
 
-      const response = await api.patch(`/orders/${id}/status`, { status });
+      const response = await api.patch(`/order/${id}/status`, { status });
       const updatedOrder = response.data;
       setOrders((prevOrders) =>
         prevOrders.map((order) => (order.id === id ? updatedOrder : order))
@@ -125,7 +125,7 @@ const Orders = () => {
 
   const handleViewOrder = async (order) => {
     try {
-      const response = await api.get(`/orders/${order.id}`);
+      const response = await api.get(`/order/${order.id}`);
       setCurrentOrder(response.data);
       setIsModalOpen(true);
     } catch (error) {
@@ -203,7 +203,7 @@ const OrderModal = ({ $isOpen, isOpen, onClose, order }) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (isOpen && order?.products) {
+    if (isOpen && order?.product) {
       setOrderProducts(
         order.products.map((p) => ({
           productId: p.id,

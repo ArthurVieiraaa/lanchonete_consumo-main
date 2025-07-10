@@ -31,15 +31,14 @@ const Login = ({ setIsLoggedIn }) => {
       setError("Preencha email e senha para continuar!");
       return;
     }
-    try {
       const response = await api.post("/user/login", { email, password: senha });
-      localStorage.setItem('token', response.data.token);
-      if (setIsLoggedIn) setIsLoggedIn(true)
-      navigate("/app");
-    } catch (err) {
-      const msg = err.response?.data?.error || "Houve um problema com o login, verifique suas credenciais!!";
-      setError(msg);
-    }
+      console.log("Login response:", response);
+      if (response && response.data && response.data.token) {
+        localStorage.setItem('accessToken', response.data.token);
+        navigate("/app");
+      } else {
+        throw new Error("Token não recebido");
+      }
   };
 
   return (

@@ -1,4 +1,5 @@
 const Category = require("../models/category");
+const Product = require('../models/product');
 
 class CategoryController {
 
@@ -44,7 +45,7 @@ static async createCategories(req, res) {
   }
 
   static async deleteCategories(req, res) {
-    const { id: idCategory } = req.params;
+    const idCategory = req.params.id;
 
     try {
       const category = await Category.findByPk(idCategory);

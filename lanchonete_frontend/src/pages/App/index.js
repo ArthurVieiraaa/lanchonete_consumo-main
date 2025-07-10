@@ -6,7 +6,11 @@ const App = () => {
     return (
         <Container>
             <Title>Tela de Aplicação</Title>
-            {/* conteúdo da página de aplicação */}
+            <Link to="/products">Produtos</Link>
+            <Link to="/categories">Categorias</Link>
+            <Link to="/orders">Pedidos</Link>
+            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/dashboard">Dashboard</Link>
             <Link to="/logout">Logout</Link>
         </Container>
     );
